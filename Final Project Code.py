@@ -20,7 +20,7 @@ def Michaelis_Menten(data):
     ax1.scatter(mentenx, menteny1, color = "blue", s =20, label = "CycA RbC WT" )
     ax1.scatter(mentenx, menteny2, color = "red", s =20, label = "CycA Rbc mutant")
     ax1.set_xlabel('FoxM1 (uM)')
-    ax1.set_ylabel('Rate (micromolar/min')
+    ax1.set_ylabel('Rate (micromolar/min)')
     ax1.set_title('Michaelis-Menten Plot')
     ax1.legend()
     plt.show()
@@ -36,8 +36,19 @@ def LineWeaver_Burke(data):
         weavery1.append(1/row.iloc[1])
         weavery2.append(1/row.iloc[2])
 
+    #creating a line of best fit for both cases
+    m1, b1 = np.polyfit(weaverx, weavery1, 1)
+    m2, b2 = np.polyfit(weaverx, weavery2, 1)
+    x_fitted = np.linspace(min(weaverx), max(weaverx), 100) #creating a larger set of x-values to fit the line more smoothly
+
     ax2.scatter(weaverx, weavery1, color="blue", s=20, label="CycA RbC WT")
     ax2.scatter(weaverx, weavery2, color="red", s=20, label="CycA Rbc mutant")
+
+    # y = mx + b; 1/v0 = Km/vmax(1/[S]) + 1/Vmax
+    # b = 1/Vmax; Vmax = 1/b
+    # m = Km/Vmax; Km = m/b
+    ax2.plot(x_fitted, m1 * x_fitted + b1, color="blue", label = f"WT Vmax = {1/b1:.3}\n WT Km = {m1/b1:.3}")
+    ax2.plot(x_fitted, m2 * x_fitted + b2, color="red", label = f"Mutant Vmax = {1/b2:.3}\n Mutant Km = {m2/b2:.3}")
     ax2.set_xlabel('1/FoxM1 (uM)')
     ax2.set_ylabel('1/V0')
     ax2.set_title('LineWeaver-Burke Plot')
